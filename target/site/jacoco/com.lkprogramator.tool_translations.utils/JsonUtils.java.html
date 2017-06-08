@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="cs"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>JsonUtils.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ProgrammersToolbox_Translations</a> &gt; <a href="index.source.html" class="el_package">com.lkprogramator.tool_translations.utils</a> &gt; <span class="el_source">JsonUtils.java</span></div><h1>JsonUtils.java</h1><pre class="source lang-java linenums">package com.lkprogramator.tool_translations.utils;
+
+import com.lkprogramator.tool_translations.utils.messages.LoggerMessage;
+
+import org.codehaus.jackson.map.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.type.JavaType;
+import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
+import org.codehaus.jackson.map.AnnotationIntrospector;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
+
+<span class="nc" id="L19">public class JsonUtils {</span>
+
+<span class="fc" id="L21">    private static final Logger LOGGER = LoggerFactory.getLogger(JsonUtils.class);</span>
+
+    /**
+     * Save Map&lt;String, String&gt; to JSON file
+     *
+     * @param mapObject map to be saved as JSON file.
+     * @param jsonFilePath Path where file will be generated.
+     */
+    public static void writeMapToJsonFile(Map&lt;String, String&gt; mapObject, String jsonFilePath) {
+
+<span class="fc" id="L31">        ObjectMapper objectMapper = new ObjectMapper();</span>
+
+        try {
+<span class="fc" id="L34">            objectMapper.writeValue(new File(jsonFilePath), mapObject);</span>
+<span class="nc" id="L35">        } catch (IOException ex) {</span>
+<span class="nc" id="L36">            LoggerMessage lm = new LoggerMessage(&quot;Unable Access the file. &quot;).addValue(&quot;jsonFilePath&quot;, jsonFilePath);</span>
+<span class="nc" id="L37">            LOGGER.error(lm.toString(), ex);</span>
+<span class="fc" id="L38">        }</span>
+<span class="fc" id="L39">    }</span>
+
+    /**
+     * Converts JSON string to List of Objects, represented by given class type.
+     * Conversion is done using Jackson processor.
+     *
+     * @param content Json string to convert.
+     * @param valueType class type to return.
+     * @return List of objects representing converted Json string.
+     */
+    public static &lt;T&gt; List&lt;T&gt; readValuesInList(String content, Class&lt;T&gt; valueType) {
+<span class="fc" id="L50">        List&lt;T&gt; out = null;</span>
+<span class="fc" id="L51">        ObjectMapper mapper = new ObjectMapper().configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES,</span>
+                false);
+<span class="fc" id="L53">        JavaType jType = mapper.getTypeFactory().constructCollectionType(List.class, valueType);</span>
+<span class="fc" id="L54">        AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();</span>
+<span class="fc" id="L55">        mapper.setAnnotationIntrospector(introspector);</span>
+        try {
+<span class="fc" id="L57">            out = mapper.readValue(content, jType);</span>
+<span class="nc" id="L58">        } catch (IOException e) {</span>
+<span class="nc" id="L59">            LoggerMessage lm = new LoggerMessage(&quot;Unable to convert json string to list&quot;).addValue(&quot;content&quot;, content)</span>
+<span class="nc" id="L60">                    .addValue(&quot;valueType&quot;, valueType.toString());</span>
+<span class="nc" id="L61">            LOGGER.error(lm.toString(), e);</span>
+
+<span class="fc" id="L63">        }</span>
+<span class="fc" id="L64">        return out;</span>
+    }
+
+    /**
+     * Converts JSON string to Object, represented by given class type.
+     * Conversion is done using Jackson processor.
+     *
+     * @param &lt;T&gt;
+     * @param jsonFilePath path to Json
+     * @param valueType class type to return.
+     * @return List of objects representing converted Json string.
+     *
+     */
+    public static &lt;T&gt; T readValuesFromFileAsObject(String jsonFilePath, Class&lt;T&gt; valueType) {
+
+<span class="fc" id="L79">        T loaded = null;</span>
+<span class="fc" id="L80">        ObjectMapper mapper = new ObjectMapper();</span>
+
+        try {
+<span class="fc" id="L83">            loaded = mapper.readValue(new File(jsonFilePath), valueType);</span>
+<span class="nc" id="L84">        } catch (IOException ex) {</span>
+<span class="nc" id="L85">            LoggerMessage lm = new LoggerMessage(&quot;Unable to convert json string to object &quot;).addValue(&quot;jsonFilePath&quot;, jsonFilePath)</span>
+<span class="nc" id="L86">                    .addValue(&quot;valueType&quot;, valueType.toString());</span>
+<span class="nc" id="L87">            LOGGER.error(lm.toString(), ex);</span>
+
+<span class="fc" id="L89">        }</span>
+
+<span class="fc" id="L91">        return loaded;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.0.201403182114</span></div></body></html>

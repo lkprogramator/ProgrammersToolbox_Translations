@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="cs"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CsvUtils.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ProgrammersToolbox_Translations</a> &gt; <a href="index.source.html" class="el_package">com.lkprogramator.tool_translations.utils</a> &gt; <span class="el_source">CsvUtils.java</span></div><h1>CsvUtils.java</h1><pre class="source lang-java linenums">package com.lkprogramator.tool_translations.utils;
+
+/*
+ * @author LKprogramator
+ */
+import com.fasterxml.jackson.databind.MappingIterator;
+import java.io.IOException;
+import java.io.File;
+import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.lkprogramator.tool_translations.utils.messages.LoggerMessage;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+<span class="fc" id="L24">public class CsvUtils {</span>
+
+<span class="fc" id="L26">    private static final Logger LOGGER = LoggerFactory.getLogger(CsvUtils.class);</span>
+
+    /**
+     * Extracts data from csv file given
+     *
+     * @param csvFilePath
+     * @param separator The separator can be: ',', ';' or '\t'
+     * @return List of Map reprezentations of data
+     * @throws IOException when csv file has invalid format
+     */
+    public List&lt;Map&lt;String, String&gt;&gt; parseCsvFile(String csvFilePath, char separator) throws IOException {
+
+<span class="fc" id="L38">        LoggerMessage lm = new LoggerMessage(&quot;parsing Csv File &quot;).addValue(&quot;csvFilePath&quot;, csvFilePath);</span>
+<span class="fc" id="L39">        LOGGER.info(lm.toString());</span>
+
+<span class="fc" id="L41">        List&lt;Map&lt;String, String&gt;&gt; parseedCsv = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L43">        CsvMapper mapper = new CsvMapper();</span>
+
+<span class="fc" id="L45">        CsvSchema schema = CsvSchema.emptySchema().withHeader().withColumnSeparator(separator); // use first row as header</span>
+
+<span class="fc" id="L47">        MappingIterator&lt;Map&lt;String, String&gt;&gt; it = mapper.readerFor(Map.class)</span>
+<span class="fc" id="L48">                .with(schema)</span>
+<span class="fc" id="L49">                .readValues(new File(csvFilePath));</span>
+
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        while (it.hasNext()) {</span>
+<span class="fc" id="L52">            Map&lt;String, String&gt; rowAsMap = it.next();</span>
+<span class="fc" id="L53">            parseedCsv.add(rowAsMap);</span>
+<span class="fc" id="L54">        }</span>
+
+<span class="fc" id="L56">        return parseedCsv;</span>
+    }
+
+    /**
+     * Convert the given List of String keys-values as a CSV String.
+     *
+     * @param csvAsListOfMaps The List of key-value pairs
+     * @param separator The separator can be: ',', ';' or '\t'
+     *
+     * @return The generated CSV string
+     */
+    public String getCSV(List&lt;Map&lt;String, String&gt;&gt; csvAsListOfMaps, String separator) {
+<span class="nc" id="L68">        Set&lt;String&gt; headers = collectHeaders(csvAsListOfMaps);</span>
+<span class="nc" id="L69">        String csvString = StringUtils.join(headers.toArray(), separator) + &quot;\n&quot;;</span>
+
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        for (Map&lt;String, String&gt; map : csvAsListOfMaps) {</span>
+<span class="nc" id="L72">            csvString = csvString + getSeperatedColumns(headers, map, separator) + &quot;\n&quot;;</span>
+<span class="nc" id="L73">        }</span>
+
+<span class="nc" id="L75">        return csvString;</span>
+    }
+
+    /**
+     * Write the given CSV string to the given file.
+     *
+     * @param csvString The csv string to write into the file
+     * @param fileName The file to write (including the path)
+     */
+    public void writeToFile(String csvString, String fileName) {
+        try {
+<span class="nc" id="L86">            FileUtils.writeStringToFile(new File(fileName), csvString);</span>
+<span class="nc" id="L87">        } catch (IOException ex) {</span>
+
+<span class="nc" id="L89">            LoggerMessage lm = new LoggerMessage(&quot;writing To File has faild &quot;).addValue(&quot;fileName&quot;, fileName).addValue(&quot;csvString&quot;, csvString);</span>
+<span class="nc" id="L90">            LOGGER.error(lm.toString(), ex);</span>
+
+<span class="nc" id="L92">        }</span>
+<span class="nc" id="L93">    }</span>
+
+    /**
+     * Get separated comlumns used a separator (comma, semi column, tab).
+     *
+     * @param headers The CSV headers
+     * @param map Map of key-value pairs contains the header and the value
+     *
+     * @return a string composed of columns separated by a specific separator.
+     */
+    private String getSeperatedColumns(Set&lt;String&gt; headers, Map&lt;String, String&gt; map, String separator) {
+<span class="nc" id="L104">        List&lt;String&gt; items = new ArrayList&lt;String&gt;();</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        for (String header : headers) {</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">            String value = map.get(header) == null ? &quot;&quot; : map.get(header).replace(separator, &quot;&quot;);</span>
+<span class="nc" id="L107">            items.add(value);</span>
+<span class="nc" id="L108">        }</span>
+
+<span class="nc" id="L110">        return StringUtils.join(items.toArray(), separator);</span>
+    }
+
+    /**
+     * Get the CSV header.
+     *
+     * @param flatJson
+     *
+     * @return a Set of headers
+     */
+    public Set&lt;String&gt; collectHeaders(List&lt;Map&lt;String, String&gt;&gt; flatJson) {
+<span class="nc" id="L121">        Set&lt;String&gt; headers = new LinkedHashSet&lt;String&gt;();</span>
+
+<span class="nc bnc" id="L123" title="All 2 branches missed.">        for (Map&lt;String, String&gt; map : flatJson) {</span>
+<span class="nc" id="L124">            headers.addAll(map.keySet());</span>
+<span class="nc" id="L125">        }</span>
+
+<span class="nc" id="L127">        return headers;</span>
+    }
+
+    /**
+     * Extracts data from csv file into list of key-value pairs
+     *
+     * @param csvFilePath
+     * @param CSVSeparator The separator can be: ',', ';' or '\t'
+     *
+     * @return The List of key-value pairs
+     */
+    public List&lt;Map&lt;String, String&gt;&gt; readCsvAsListOfMaps(String csvFilePath, char CSVSeparator) {
+
+<span class="fc" id="L140">        List&lt;Map&lt;String, String&gt;&gt; csvData = new ArrayList&lt;Map&lt;String, String&gt;&gt;();</span>
+
+        try {
+<span class="fc" id="L143">            csvData = parseCsvFile(csvFilePath, CSVSeparator);</span>
+<span class="nc" id="L144">        } catch (IOException ex) {</span>
+
+<span class="nc" id="L146">            LoggerMessage lm = new LoggerMessage(&quot;Loading of CSV file has faild &quot;).addValue(&quot;csvFilePath&quot;, csvFilePath);</span>
+<span class="nc" id="L147">            LOGGER.error(lm.toString(), ex);</span>
+
+<span class="fc" id="L149">        }</span>
+
+<span class="fc" id="L151">        return csvData;</span>
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.0.201403182114</span></div></body></html>

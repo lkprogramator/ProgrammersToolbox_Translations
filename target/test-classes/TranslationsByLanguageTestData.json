@@ -1,0 +1,22 @@
+[
+  {
+    "lang": "CS",
+    "translations": {
+      "AF": "Afghánistán",
+      "AL": "Albánie",
+      "DZ": "Alžírsko",
+      "AD": "Andorra",
+      "AO": "Angola"
+    }
+  },
+  {
+    "lang": "EN",
+    "translations": {
+      "AF": "Afghanistan",
+      "AL": "Albania",
+      "DZ": "Algeria",
+      "AD": "Andorra",
+      "AO": "Angola"
+    }
+  }
+]

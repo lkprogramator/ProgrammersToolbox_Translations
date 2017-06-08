@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="cs"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Main.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ProgrammersToolbox_Translations</a> &gt; <a href="index.source.html" class="el_package">com.lkprogramator.tool_translations.toolbox</a> &gt; <span class="el_source">Main.java</span></div><h1>Main.java</h1><pre class="source lang-java linenums">package com.lkprogramator.tool_translations.toolbox;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.lkprogramator.tool_translations.utils.messages.LoggerMessage;
+import com.lkprogramator.tool_translations.translation.TranslationsByLanguage;
+
+/**
+ *
+ * @author LKprogramator
+ */
+<span class="nc" id="L18">public class Main {</span>
+
+<span class="nc" id="L20">    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);</span>
+
+    //private static final String ARGUMENT_PREFIX =&quot;-&quot;;
+    private static final String ARGUMENT_SEPARATOR = &quot;=&quot;;
+    private static final String ARGUMENT_CSV_FILE = &quot;csvFile&quot;;
+    private static final String ARGUMENT_RESULT_FOLDER = &quot;resultFolder&quot;;
+    private static final String ARGUMENT_PROCESS_TO = &quot;processTo&quot;;
+    private static final char CSV_SEPARATOR = ';';
+
+<span class="nc" id="L29">    private static Path pathToCsv = Paths.get(&quot;./&quot;);</span>
+<span class="nc" id="L30">    private static String processTo = &quot;json&quot;;</span>
+<span class="nc" id="L31">    private static Path pathToResultFolder = Paths.get(&quot;./&quot;);</span>
+
+    public static void main(String[] args) {
+
+<span class="nc" id="L35">        extractAndValidateArguments(args);</span>
+
+<span class="nc" id="L37">        convertModelToFile(buildModel());</span>
+
+<span class="nc" id="L39">    }</span>
+
+    private static void extractAndValidateArguments(String[] args) {
+
+<span class="nc bnc" id="L43" title="All 2 branches missed.">        if (args.length == 0) {</span>
+
+<span class="nc" id="L45">            LoggerMessage lm = new LoggerMessage(&quot;Error No console parameters, App has ended.&quot;);</span>
+<span class="nc" id="L46">            LOGGER.error(lm.toString());</span>
+
+<span class="nc" id="L48">            System.exit(0);</span>
+        }
+
+        //test
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        for (String s : args) {</span>
+<span class="nc" id="L53">            System.out.println(&quot;Args: &quot; + s);</span>
+        }
+<span class="nc" id="L55">        LOGGER.info(&quot;Arguments: &quot;, args.toString());</span>
+
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        for (int i = 0; i &lt; args.length; i++) {</span>
+
+<span class="nc" id="L59">            String[] keyVal = args[i].split(ARGUMENT_SEPARATOR);</span>
+
+<span class="nc bnc" id="L61" title="All 14 branches missed.">            switch (keyVal[0]) {</span>
+                case ARGUMENT_CSV_FILE:
+
+<span class="nc bnc" id="L64" title="All 2 branches missed.">                    if (!Files.exists(Paths.get(keyVal[1]))) {</span>
+<span class="nc" id="L65">                        LoggerMessage lm = new LoggerMessage(&quot;Error CSV file not exist.&quot;);</span>
+<span class="nc" id="L66">                        LOGGER.error(lm.toString());</span>
+<span class="nc" id="L67">                        System.exit(0);</span>
+<span class="nc" id="L68">                    } else {</span>
+<span class="nc" id="L69">                        pathToCsv = Paths.get(keyVal[1]);</span>
+                    }
+
+<span class="nc" id="L72">                    break;</span>
+                case ARGUMENT_PROCESS_TO:
+
+<span class="nc bnc" id="L75" title="All 2 branches missed.">                    if (!keyVal[1].toLowerCase().matches(&quot;json|yaml|php&quot;)) {</span>
+<span class="nc" id="L76">                        LoggerMessage lm = new LoggerMessage(&quot;Error processTo value is incorect.&quot;);</span>
+<span class="nc" id="L77">                        LOGGER.error(lm.toString());</span>
+<span class="nc" id="L78">                        System.exit(0);</span>
+<span class="nc" id="L79">                    } else {</span>
+<span class="nc" id="L80">                        processTo = keyVal[1].toLowerCase();</span>
+                    }
+
+<span class="nc" id="L83">                    break;</span>
+
+                case ARGUMENT_RESULT_FOLDER:
+
+<span class="nc" id="L87">                    pathToResultFolder = Paths.get(keyVal[1]);</span>
+
+<span class="nc bnc" id="L89" title="All 2 branches missed.">                    if (!Files.isDirectory(pathToResultFolder)) {</span>
+<span class="nc" id="L90">                        LoggerMessage lm = new LoggerMessage(&quot;Error result folder not exist&quot;);</span>
+<span class="nc" id="L91">                        LOGGER.error(lm.toString());</span>
+
+<span class="nc bnc" id="L93" title="All 2 branches missed.">                        if (Files.isDirectory(pathToCsv.getParent())) {</span>
+<span class="nc" id="L94">                            pathToResultFolder = pathToCsv.getParent();</span>
+
+<span class="nc" id="L96">                            LoggerMessage lmr = new LoggerMessage(&quot;Result folder not exist. Use same folder as csv file as result folder.&quot;);</span>
+<span class="nc" id="L97">                            LOGGER.info(lmr.toString());</span>
+
+                        }
+                        //System.exit(0);
+                    }
+
+                    break;
+            }
+
+        }
+
+<span class="nc" id="L108">    }</span>
+
+    private static List&lt;TranslationsByLanguage&gt; buildModel() {
+
+<span class="nc" id="L112">        CsvToModel csvData = new CsvToModel();</span>
+<span class="nc" id="L113">        List&lt;TranslationsByLanguage&gt; model = csvData.processCsvToModel(pathToCsv.toString(), CSV_SEPARATOR);</span>
+
+<span class="nc" id="L115">        return model;</span>
+
+    }
+
+    private static void convertModelToFile(List&lt;TranslationsByLanguage&gt; model) {
+
+<span class="nc bnc" id="L121" title="All 14 branches missed.">        switch (processTo) {</span>
+            case &quot;json&quot;:
+<span class="nc" id="L123">                ModelToJson modelToJson = new ModelToJson();</span>
+<span class="nc" id="L124">                modelToJson.ConvertModelToJson(model, pathToResultFolder);</span>
+
+<span class="nc" id="L126">                break;</span>
+            case &quot;yaml&quot;:
+
+<span class="nc" id="L129">                ModelToYaml modelToYaml = new ModelToYaml();</span>
+<span class="nc" id="L130">                modelToYaml.ConvertModelToYaml(model, pathToResultFolder);</span>
+
+<span class="nc" id="L132">                break;</span>
+            case &quot;php&quot;:
+
+<span class="nc" id="L135">                ModelToPHP modelToPHP = new ModelToPHP();</span>
+<span class="nc" id="L136">                modelToPHP.ConvertModelToPHP(model, pathToResultFolder);</span>
+
+                break;
+
+        }
+
+<span class="nc" id="L142">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.0.201403182114</span></div></body></html>
