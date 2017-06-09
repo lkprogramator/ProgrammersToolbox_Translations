@@ -8,8 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -100,13 +102,35 @@ public class CsvToModelTest {
      * Test of assambleModel method, of class CsvToModel.
      */
     @Test
-    public void assambleModel() {
+    public void testAssambleModel() {
 
         CsvToModel instance = new CsvToModel();
 
         List<TranslationsByLanguage> result = instance.assambleModel(csvData);
 
         assertEquals(translationsByLanguage, result);
+
+    }
+
+    @Test
+    public void testGetLanguages() {
+
+        Set<String> languagesAndKey = new HashSet<String>();
+
+        Set<String> expResult = new HashSet<String>();
+
+        languagesAndKey.add("key");
+        languagesAndKey.add("EN");
+        languagesAndKey.add("CS");
+
+        expResult.add("EN");
+        expResult.add("CS");
+
+        CsvToModel instance = new CsvToModel();
+
+        Set<String> result = instance.getLanguages(languagesAndKey);
+
+        assertEquals(expResult, result);
 
     }
 

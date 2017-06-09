@@ -43,10 +43,10 @@ public class CommonUtilsTest {
     @Test
     public void testCreatePathForResultFile() {
         System.out.println("createPathForResultFile");
-        String pathToResultFolder = "my/test/path/to/folder/with";
+        String pathToResultFolder = "my" + File.separator + "test" + File.separator + "path" + File.separator + "to" + File.separator + "folder" + File.separator + "with";
         String fileName = "test";
         String fileExtension = "file";
-        String expResult = "my/test/path/to/folder/with/test.file";
+        String expResult = "my" + File.separator + "test" + File.separator + "path" + File.separator + "to" + File.separator + "folder" + File.separator + "with" + File.separator + "test.file";
         String result = CommonUtils.createPathForResultFile(pathToResultFolder, fileName, fileExtension);
         assertEquals(expResult, result);
 
@@ -58,10 +58,10 @@ public class CommonUtilsTest {
     @Test
     public void testCreatePathForResultFileV2() {
         System.out.println("createPathForResultFile");
-        String pathToResultFolder = "my/test/path/to/folder/with/";
+        String pathToResultFolder = "my" + File.separator + "test" + File.separator + "path" + File.separator + "to" + File.separator + "folder" + File.separator + "with" + File.separator;
         String fileName = "test";
         String fileExtension = "file";
-        String expResult = "my/test/path/to/folder/with/test.file";
+        String expResult = "my" + File.separator + "test" + File.separator + "path" + File.separator + "to" + File.separator + "folder" + File.separator + "with" + File.separator + "test.file";
         String result = CommonUtils.createPathForResultFile(pathToResultFolder, fileName, fileExtension);
         assertEquals(expResult, result);
 

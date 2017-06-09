@@ -26,10 +26,10 @@ public class CommonUtils {
      */
     public static String createPathForResultFile(String pathToResultFolder, String fileName, String fileExtension) {
 
-        if (pathToResultFolder.endsWith("/")) {
+        if (pathToResultFolder.endsWith(File.separator)) {
             return pathToResultFolder + fileName + "." + fileExtension;
         } else {
-            return pathToResultFolder + "/" + fileName + "." + fileExtension;
+            return pathToResultFolder + File.separator + fileName + "." + fileExtension;
         }
 
     }

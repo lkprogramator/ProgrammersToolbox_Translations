@@ -32,6 +32,9 @@ public class Main {
 
     public static void main(String[] args) {
 
+        //java -jar ProgrammersToolbox_Translations-1.0-SNAPSHOT.jar csvFile=C:/Users/ZAX/Documents/mycsvfile.csv 
+        //processTo=json resultFolder=C:/Users/ZAX/Documents/
+        args = new String[]{"csvFile=C:/Users/ZAX/Documents/zzztest/testprekladu.csv", "processTo=json", "resultFolder=C:/Users/ZAX/Documents/zzztest/"};
         extractAndValidateArguments(args);
 
         convertModelToFile(buildModel());
@@ -62,7 +65,7 @@ public class Main {
                 case ARGUMENT_CSV_FILE:
 
                     if (!Files.exists(Paths.get(keyVal[1]))) {
-                        LoggerMessage lm = new LoggerMessage("Error CSV file not exist.");
+                        LoggerMessage lm = new LoggerMessage("Error CSV file not exist.").addValue("Csv file path", keyVal[1]);
                         LOGGER.error(lm.toString());
                         System.exit(0);
                     } else {

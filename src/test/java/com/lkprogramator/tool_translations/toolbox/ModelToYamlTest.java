@@ -28,7 +28,7 @@ public class ModelToYamlTest {
     public static void setUpClass() {
 
         Path resourceDirectory = Paths.get("src/test/resource");
-        pathToResultFolder = resourceDirectory.toString() + "/genTestFiles/";
+        pathToResultFolder = resourceDirectory.toString();
 
         classLoader = ModelToYamlTest.class.getClassLoader();
 
@@ -61,17 +61,17 @@ public class ModelToYamlTest {
 
         List<TranslationsByLanguage> model = translationsByLanguage;
 
-        Path resultFolder = Paths.get(pathToResultFolder);
+        Path resultFolder = Paths.get(pathToResultFolder + "/genTestFiles/");
 
         ModelToYaml instance = new ModelToYaml();
 
         instance.ConvertModelToYaml(model, resultFolder);
 
-        File resultfile = new File(pathToResultFolder + "genTestFiles/EN.yaml");
+        File resultfile = new File(pathToResultFolder + "/genTestFiles/EN.yaml");
 
         String resultDataFromFile = CommonUtils.readFileToString(resultfile, "UTF-8");
 
-        File expResultfile = new File(pathToResultFolder + "expectedResultYamlEN.yaml");
+        File expResultfile = new File(pathToResultFolder + "/expectedResultYamlEN.yaml");
 
         String expResultDataFromFile = CommonUtils.readFileToString(expResultfile, "UTF-8");
 

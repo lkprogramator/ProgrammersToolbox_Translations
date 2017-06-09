@@ -26,10 +26,10 @@ import org.slf4j.LoggerFactory;
      */
     public static String createPathForResultFile(String pathToResultFolder, String fileName, String fileExtension) {
 
-<span class="fc bfc" id="L29" title="All 2 branches covered.">        if (pathToResultFolder.endsWith(&quot;/&quot;)) {</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        if (pathToResultFolder.endsWith(File.separator)) {</span>
 <span class="fc" id="L30">            return pathToResultFolder + fileName + &quot;.&quot; + fileExtension;</span>
         } else {
-<span class="fc" id="L32">            return pathToResultFolder + &quot;/&quot; + fileName + &quot;.&quot; + fileExtension;</span>
+<span class="fc" id="L32">            return pathToResultFolder + File.separator + fileName + &quot;.&quot; + fileExtension;</span>
         }
 
     }
